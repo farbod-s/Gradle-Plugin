@@ -1,0 +1,13 @@
+.idea/*
+!.idea/codeStyles
+
+.DS_Store
+
+build/
+out/
+*.iml
+.gradle
+local.properties
+
+*.log
+
