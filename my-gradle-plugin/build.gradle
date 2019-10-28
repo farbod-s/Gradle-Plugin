@@ -1,18 +1,75 @@
-plugins {
-    id 'groovy'
-    id 'java'
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+    }
 }
 
-group 'com.example'
-version '1.0.0'
+plugins {
+    // Publishing publicly
+    id 'com.gradle.plugin-publish' version '0.10.1'
+}
 
-sourceCompatibility = 1.8
+group = 'com.example'
+version = '1.0.0'
+project.ext.archivesBaseName = 'my-gradle-plugin'
+project.ext.pomDesc = 'Gradle plug-in to build my applications.'
+project.ext.bintrayPublish = true
+project.ext.bintrayUser = ''
+project.ext.bintrayKey = ''
+project.ext.bintrayRepo = ''
+project.ext.bintrayOrg = ''
+project.ext.url = 'http://farbod-s.github.io'
+//project.ext.mavenUser = ''
+//project.ext.mavenPassword = ''
+
+apply plugin: 'groovy'
+apply plugin: 'java-gradle-plugin'
 
 repositories {
-    mavenCentral()
+    google()
+    jcenter()
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.3.11'
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile     gradleApi()
+    compile     'com.google.code.gson:gson:2.8.5'
+
+    testCompile gradleTestKit()
+    testCompile 'junit:junit:4+'
+    testCompile 'com.google.truth:truth:0.42'
 }
+
+gradlePlugin {
+    plugins {
+        myGradlePlugin {
+            id = 'com.example.my-gradle-plugin'
+            implementationClass = 'com.example.MyGradlePlugin'
+        }
+    }
+}
+
+// Configuration for: com.gradle.plugin-publish
+pluginBundle {
+    website = project.ext.url
+    vcsUrl = 'https://github.com/farbod-s/Gradle-Plugin.git'
+    tags = ['my', 'gradle', 'plugin']
+    plugins {
+        myGradlePlugin {
+            displayName = 'My Gradle Plugin'
+            description = project.ext.pomDesc
+            id          = "${project.group}.${project.ext.archivesBaseName}"
+        }
+    }
+}
+
+apply from: 'publish.gradle'
+
+if (project.hasProperty('bintrayUser') && project.hasProperty('bintrayKey')) {
+    apply from: 'bintray.gradle'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
