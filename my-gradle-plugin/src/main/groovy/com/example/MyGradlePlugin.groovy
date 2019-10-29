@@ -20,8 +20,6 @@ class MyGradlePlugin implements Plugin<Project> {
 
     static handleVariantOpenFile(Project project, def variant) {
         File foundedJsonFile = null
-        File productionFile = null
-        File developmentFile = null
         List<String> fileLocations = getJsonLocations("$variant.dirName")
 
         for (String location : fileLocations) {
